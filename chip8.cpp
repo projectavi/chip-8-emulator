@@ -486,3 +486,24 @@ void Chip8::OP_Fx65() {
         registers[i] = memory[indexReg + i];
     }
 }
+
+void Chip8::Cycle() {
+    // Fetch
+    opcode = (memory[programCount] << 8u) | memory[programCount + 1];
+
+    // Increment the PC
+    programCount += 2;
+
+    // Decode and Execute
+    ((*this).*(table[(opcode & 0xF000u) >> 12u]))();
+
+    // Decrement the delay timer
+    if (delayTimer > 0) {
+        --delayTimer;
+    }
+
+    // Decrement the sound timer
+    if (soundTimer > 0) {
+        --soundTimer;
+    }
+}
