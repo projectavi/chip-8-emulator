@@ -1,4 +1,4 @@
-#include <csdint>
+#include <cstdint>
 #include <chrono>
 #include <random>
 
@@ -139,7 +139,7 @@ class Chip8 {
         uint8_t delayTimer{};
         uint8_t soundTimer{};
         uint8_t inputKeys[16]{};
-        uint32_t video[64 * 32]{};
+        // uint32_t video[64 * 32]{};
         uint16_t opcode;
 
         std::default_random_engine randGen;
@@ -151,4 +151,4 @@ class Chip8 {
         Chip8Func table8[0xE + 1]{&Chip8::OP_NULL};
         Chip8Func tableE[0xE + 1]{&Chip8::OP_NULL};
         Chip8Func tableF[0x65 + 1]{&Chip8::OP_NULL};
-}
+};

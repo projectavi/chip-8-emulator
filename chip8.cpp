@@ -1,8 +1,8 @@
-#include <csdint> // look into this
+#include <cstdint> // look into this
 #include <fstream>
 #include <chrono>
 #include <random>
-#include <chip8.h>
+#include "chip8.hpp"
 
 const unsigned int fontsetSize = 80;
 const unsigned int startAddress = 0x200;
@@ -84,25 +84,6 @@ Chip8::Chip8()
         tableF[0x33] = &Chip8::OP_Fx33;
         tableF[0x55] = &Chip8::OP_Fx55;
         tableF[0x65] = &Chip8::OP_Fx65;
-    
-
-    void Table0() {
-        ((*this).*(table0[opcode & 0x000Fu]))();
-    }
-
-    void Table8() {
-        ((*this).*(table8[opcode & 0x000Fu]))();
-    }
-
-    void TableE() {
-        ((*this).*(tableE[opcode & 0x000Fu]))();
-    }
-
-    void TableF() {
-        ((*this).*(tableF[opcode & 0x00FFu]))();
-    }
-
-    void OP_NULL() {}
 
     typedef void (Chip8::*Chip8Func)();
     Chip8Func table[0xF + 1]{&Chip8::OP_NULL};
@@ -111,6 +92,24 @@ Chip8::Chip8()
     Chip8Func tableE[0x1 + 1]{&Chip8::OP_NULL};
     Chip8Func tableF[0x65 + 1]{&Chip8::OP_NULL};
 }
+
+void Chip8::Table0() {
+    ((*this).*(table0[opcode & 0x000Fu]))();
+}
+
+void Chip8::Table8() {
+    ((*this).*(table8[opcode & 0x000Fu]))();
+}
+
+void Chip8::TableE() {
+    ((*this).*(tableE[opcode & 0x000Fu]))();
+}
+
+void Chip8::TableF() {
+    ((*this).*(tableF[opcode & 0x00FFu]))();
+}
+
+void Chip8::OP_NULL() {}
 
 void Chip8::LoadROM(char const* filename) {
     std::ifstream file(filename, std::ios::binary | std::ios::ate);
@@ -121,7 +120,7 @@ void Chip8::LoadROM(char const* filename) {
 
         file.seekg(0, std::ios::beg);
         file.read(buffer, size);
-        file.close()
+        file.close();
 
         for (long i = 0; i < size; i++) {
             memory[startAddress + i] = buffer[i];
@@ -142,7 +141,7 @@ void Chip8::OP_00EE() {
     programCount = stack[stackPoint];
 }
 
-void Chip9::OP_1nnn() {
+void Chip8::OP_1nnn() {
     uint16_t address = opcode & 0x0FFFu;
 
     programCount = address;
@@ -163,6 +162,17 @@ void Chip8::OP_3xkk() {
     if (registers[Vx] == byte) {
         programCount += 2;
     }
+}
+
+void Chip8::OP_4xkk()
+{
+	uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+	uint8_t byte = opcode & 0x00FFu;
+
+	if (registers[Vx] != byte)
+	{
+		programCount += 2;
+	}
 }
 
 void Chip8::OP_5xy0() {
@@ -188,7 +198,7 @@ void Chip8::OP_7xkk() {
     registers[Vx] += byte;
 }
 
-void Chip8::OP_8xy(){
+void Chip8::OP_8xy0(){
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     uint8_t Vy = (opcode & 0x0F00u) >> 4u;
 
@@ -252,7 +262,7 @@ void Chip8::OP_8xy6() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
     
     // Save Least Significant Bit in VF
-    registers[0xF] = (regusters[Vx] & 0x1u);
+    registers[0xF] = (registers[Vx] & 0x1u);
 
     registers[Vx] >>= 1;
 }
@@ -292,7 +302,7 @@ void Chip8::OP_9xy0() {
 void Chip8::OP_Annn() {
     uint16_t address = opcode & 0x0FFFu;
 
-    index = address;
+    indexReg = address;
 }
 
 void Chip8::OP_Bnnn() {

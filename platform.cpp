@@ -1,7 +1,7 @@
 #include "platform.hpp"
 #include <SDL2/SDL.h>
 
-Platform:Platform(char const* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
+Platform::Platform(char const* title, int windowWidth, int windowHeight, int textureWidth, int textureHeight) {
     SDL_Init(SDL_INIT_VIDEO);
 
     window = SDL_CreateWindow(title, 0, 0, windowWidth, windowHeight, SDL_WINDOW_SHOWN);

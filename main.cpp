@@ -1,12 +1,12 @@
 #include <chrono>
 #include <iostream>
 
-#include "platform.hpp"
+// #include "platform.hpp"
 #include "platform.cpp"
-#include "chip8.hpp"
+// #include "chip8.hpp"
 #include "chip8.cpp"
 
-int main(int argc, char__ argv) {
+int main(int argc, char** argv) {
     if (argc != 4) {
         std::cerr << "Usage: " << argv[0] << " <Scale> <Delay> <ROM> \n";
         std::exit(EXIT_FAILURE);
@@ -30,7 +30,7 @@ int main(int argc, char__ argv) {
         quit = platform.ProcessInput(chip8.keypad);
 
         auto currentTime = std::chrono::high_resolution_clock::now();
-        float delayTime = std::chrono::duation<float, std::chrono::milliseconds::period>(currentTime - lastCycleTime).count();
+        float delayTime = std::chrono::duration<float, std::chrono::milliseconds::period>(currentTime - lastCycleTime).count();
 
         if(delayTime > cycleDelay) {
             lastCycleTime = currentTime;
