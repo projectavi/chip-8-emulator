@@ -1,6 +1,7 @@
 {
     "files.associations": {
         "*.h": "cpp",
-        "cstdint": "cpp"
+        "cstdint": "cpp",
+        "chrono": "cpp"
     }
 }

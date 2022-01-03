@@ -84,13 +84,6 @@ Chip8::Chip8()
         tableF[0x33] = &Chip8::OP_Fx33;
         tableF[0x55] = &Chip8::OP_Fx55;
         tableF[0x65] = &Chip8::OP_Fx65;
-
-    typedef void (Chip8::*Chip8Func)();
-    Chip8Func table[0xF + 1]{&Chip8::OP_NULL};
-    Chip8Func table0[0xE + 1]{&Chip8::OP_NULL};
-    Chip8Func table8[0xE + 1]{&Chip8::OP_NULL};
-    Chip8Func tableE[0x1 + 1]{&Chip8::OP_NULL};
-    Chip8Func tableF[0x65 + 1]{&Chip8::OP_NULL};
 }
 
 void Chip8::Table0() {
@@ -177,7 +170,7 @@ void Chip8::OP_4xkk()
 
 void Chip8::OP_5xy0() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     if (registers[Vx] == registers[Vy]) {
         programCount += 2;
@@ -193,42 +186,42 @@ void Chip8::OP_6xkk() {
 
 void Chip8::OP_7xkk() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t byte = opcode & 0x0FFu;
+    uint8_t byte = opcode & 0x00FFu;
 
     registers[Vx] += byte;
 }
 
 void Chip8::OP_8xy0(){
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     registers[Vx] = Vy;
 }
 
 void Chip8::OP_8xy1() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     registers[Vx] |= registers[Vy];
 }
 
 void Chip8::OP_8xy2() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     registers[Vx] &= registers[Vy];
 }
 
 void Chip8::OP_8xy3() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     registers[Vx] ^= registers[Vy];
 }
 
 void Chip8::OP_8xy4() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     uint16_t sum = registers[Vx] + registers[Vy];
 
@@ -244,7 +237,7 @@ void Chip8::OP_8xy4() {
 
 void Chip8::OP_8xy5() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     uint16_t diff = registers[Vx] - registers[Vy];
 
@@ -269,7 +262,7 @@ void Chip8::OP_8xy6() {
 
 void Chip8::OP_8xy7() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     registers[Vx] = registers[Vy] - registers[Vx];
 
@@ -292,7 +285,7 @@ void Chip8::OP_8xyE() {
 
 void Chip8::OP_9xy0() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
 
     if (registers[Vx] != registers[Vy]) {
         programCount += 2;
@@ -320,7 +313,7 @@ void Chip8::OP_Cxkk() {
 
 void Chip8::OP_Dxyn() {
     uint8_t Vx = (opcode & 0x0F00u) >> 8u;
-    uint8_t Vy = (opcode & 0x0F00u) >> 4u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
     uint8_t height = opcode & 0x000Fu;
 
     uint8_t xPos = registers[Vx] % VIDEO_WIDTH;
@@ -357,7 +350,7 @@ void Chip8::OP_Ex9E() {
 }
 
 void Chip8::OP_ExA1() {
-    uint8_t Vx = (opcode & 0x00F00u) >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 
     uint8_t key = registers[Vx];
 
@@ -367,13 +360,13 @@ void Chip8::OP_ExA1() {
 }
 
 void Chip8::OP_Fx07() {
-    uint8_t Vx = (opcode & 0x00F00u) >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 
     registers[Vx] = delayTimer;
 }
 
 void Chip8::OP_Fx0A() {
-    uint8_t Vx = (opcode & 0x00F00u) >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 
     if (keypad[0])
     {
@@ -446,19 +439,19 @@ void Chip8::OP_Fx0A() {
 }
 
 void Chip8::OP_Fx15() {
-    uint8_t Vx = (opcode & 0x00F00u) >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 
     delayTimer = registers[Vx];
 }
 
 void Chip8::OP_Fx18() {
-    uint8_t Vx = (opcode & 0x00F00u) >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 
     soundTimer = registers[Vx];
 }
 
 void Chip8::OP_Fx1E() {
-    uint8_t Vx = (opcode & 0x00F00u) >> 8u;
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
 
     indexReg += registers[Vx];
 }
